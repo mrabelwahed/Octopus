@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
                 Log.v(TAG, "Permission is granted");
                 String url = "https://images.homedepot-static.com/productImages/612ae505-9daf-45c3-ac16-67f97dcb251d/svn/globalrose-flower-bouquets-prime-100-red-roses-64_1000.jpg";
                 mDownloadManager.downloadFile(url);
-String url2 ="https://i-h2.pinimg.com/564x/14/5c/69/145c69be0d39bfc078d2ea17502281a8.jpg";
+                String url2 = "https://i-h2.pinimg.com/564x/14/5c/69/145c69be0d39bfc078d2ea17502281a8.jpg";
                 mDownloadManager.downloadFile(url);
                 return true;
             } else {
@@ -62,7 +62,8 @@ String url2 ="https://i-h2.pinimg.com/564x/14/5c/69/145c69be0d39bfc078d2ea175022
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
                 return false;
             }
-        } else { //permission is automatically granted on sdk<23 upon installation
+        } else {
+            //permission is automatically granted on sdk<23 upon installation
             Log.v(TAG, "Permission is granted");
             mDownloadManager.downloadFile(url);
             return true;
@@ -76,7 +77,7 @@ String url2 ="https://i-h2.pinimg.com/564x/14/5c/69/145c69be0d39bfc078d2ea175022
             Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
             //resume tasks needing this permission
             mDownloadManager.downloadFile(url);
-            String url2 ="https://i-h2.pinimg.com/564x/14/5c/69/145c69be0d39bfc078d2ea17502281a8.jpg";
+            String url2 = "https://i-h2.pinimg.com/564x/14/5c/69/145c69be0d39bfc078d2ea17502281a8.jpg";
             mDownloadManager.downloadFile(url);
 
         }
