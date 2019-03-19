@@ -26,24 +26,24 @@ public class DownloadManager {
     private UiHandler uiHandler;
 
     public static DownloadManager mDownloadManager;
-    public String localPath;
 
-    private DownloadManager(Config config) {
+    private DownloadManager() {
         mDownloadQueue = new LinkedBlockingQueue<>();
-        downloadThreadPool = new ThreadPoolExecutor(config.getCorePoolSize(),
-                config.getMaxPoolSize(), config.getKeepAliveTime(),
-                TimeUnit.MILLISECONDS, mDownloadQueue);
-        localPath = config.getLocalPath();
+        downloadThreadPool = new ThreadPoolExecutor(Constants.CORE_POOL_SIZE
+                                                   , Constants.MAX_POOL_SIZE
+                                                   , Constants.KEEP_ALIVE_TIME
+                                                   , TimeUnit.MILLISECONDS,
+                                                        mDownloadQueue);
     }
 
-    public static DownloadManager getInstance(Config config) {
+    public static DownloadManager getInstance() {
         if (mDownloadManager == null)
-            mDownloadManager = new DownloadManager(config);
+            mDownloadManager = new DownloadManager();
         return mDownloadManager;
     }
 
 
-    public void downloadFile(String url) {
+    public void downloadFile(String url ,String localPath) {
         addDownloadTask(new DownloadTask(url, localPath, uiHandler));
     }
 
