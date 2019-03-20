@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit;
 public class DownloadManager {
     private final ThreadPoolExecutor downloadThreadPool;
     private final BlockingQueue<Runnable> mDownloadQueue;
-    private WeakReference<UIThreadCallback> mUiThreadCallbackWeakReference;
+//    private WeakReference<UIThreadCallback> mUiThreadCallbackWeakReference;
     private List<Future> mRunningDownloadList = new ArrayList<>();
-    private UiHandler uiHandler;
+//    private UiHandler uiHandler;
 
     public static DownloadManager mDownloadManager;
 
@@ -43,36 +43,38 @@ public class DownloadManager {
     }
 
 
-    public void downloadFile(String url ,String localPath) {
-        addDownloadTask(new DownloadTask(url, localPath, uiHandler));
+//    public void downloadFile(String url ,String localPath,UIThreadCallback uiThreadCallback) {
+//        addDownloadTask(new DownloadTask(url, localPath, uiThreadCallback));
+//    }
+    public void downloadFile(DownloadTask task){
+        addDownloadTask(task);
     }
-
 
     private void addDownloadTask(Callable task) {
         mRunningDownloadList.add(downloadThreadPool.submit(task));
     }
 
 
-    public void setUiThreadCallback(UIThreadCallback mUiThreadCallback) {
-        this.mUiThreadCallbackWeakReference = new WeakReference<>(mUiThreadCallback);
-        uiHandler = new UiHandler(mUiThreadCallbackWeakReference);
-    }
+//    public void setUiThreadCallback(UIThreadCallback mUiThreadCallback) {
+//        this.mUiThreadCallbackWeakReference = new WeakReference<>(mUiThreadCallback);
+//        uiHandler = new UiHandler(mUiThreadCallbackWeakReference);
+//    }
 
 
-    public void cancelAll() {
-        synchronized (this) {
-            mDownloadQueue.clear();
-            for (Future task : mRunningDownloadList) {
-                if (!task.isDone()) {
-                    task.cancel(true);
-                }
-            }
-
-            mRunningDownloadList.clear();
-        }
-
-        uiHandler.sendMessage(Util.createMessage(Util.MESSAGE_ID, DownloadStatus.CANCEL_ALL));
-    }
+//    public void cancelAll() {
+//        synchronized (this) {
+//            mDownloadQueue.clear();
+//            for (Future task : mRunningDownloadList) {
+//                if (!task.isDone()) {
+//                    task.cancel(true);
+//                }
+//            }
+//
+//            mRunningDownloadList.clear();
+//        }
+//
+//        uiHandler.sendMessage(Util.createMessage(Util.MESSAGE_ID, DownloadStatus.CANCEL_ALL));
+//    }
 
 
 }

@@ -5,30 +5,40 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+
 import android.util.Log;
 import android.widget.TextView;
 
 import com.core.DownloadManager;
+import com.core.DownloadTask;
 import com.status.DownloadResult;
 import com.status.DownloadStatus;
 import com.ui.UIThreadCallback;
 import com.util.Util;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 public class MainActivity extends AppCompatActivity implements UIThreadCallback {
+    public static final String url3 = "https://doc-00-50-docs.googleusercontent.com/docs/securesc/1r14jt81f7jnfbd9piaptmojvlobuogr/13epqo5he43gt6o7bntmpn8k9lc12tt7/1553083200000/14676411655443883941/14676411655443883941/0BwnvTqAnwmkaYVlfQzRrRU1uX3c?e=download&nonce=g7ft2cf127jho&user=14676411655443883941&hash=rh3qsfv5cvk2udc05sn2hrb0j4chbb0f";
     private static int REQUEST_PERMISSION = 0x0;
     private static final String TAG = MainActivity.class.getSimpleName();
     private DownloadManager mDownloadManager;
     private String url1,url2;
     private File file1, file2;
     private String localPath1,localPath2;
-
+    private RecyclerView downloadTasksRecyclerView ;
+    private List<DownloadTask> downloadTasks = new ArrayList<>();
+    TasksAdapter tasksAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,16 +49,35 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
 
 
         // Get the external storage directory path
-        String path = Environment.getExternalStorageDirectory().toString();
+        String path = Environment.getExternalStorageDirectory().toString()+"/ramadan";
+        new File(path).mkdir();
          file1 = new File(path, "filex" +new Date().getTime()+"."+ Util.getFileExtension(url1));
          localPath1 = file1.getPath();
 
          file2 = new File(path, "filey" +new Date().getTime()+"."+ Util.getFileExtension(url2));
          localPath2 = file2.getPath();
 
-        mDownloadManager = DownloadManager.getInstance();
-        mDownloadManager.setUiThreadCallback(this);
         isStoragePermissionGranted();
+        initUi();
+
+
+    }
+
+    private void initUi() {
+        downloadTasksRecyclerView = findViewById(R.id.rv_tasks);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        downloadTasksRecyclerView.setLayoutManager(linearLayoutManager);
+        DownloadTask downloadTask1 = new DownloadTask(new Date().getTime(), url3,localPath1,this);
+        DownloadTask downloadTask = new DownloadTask.Builder(url1).destination(localPath1)
+                .fileId(new Date().getTime()).fileName("file1").UiThreadCallback(this).build();
+//        DownloadTask downloadTask1 = new DownloadTask(url1,localPath1,this);
+//        downloadTask1.setFileName("first image");
+        DownloadTask downloadTask2 = new DownloadTask(new Date().getTime(),url2,localPath2, this);
+        downloadTask2.setFileName("second image");
+        downloadTasks.add(downloadTask);
+        downloadTasks.add(downloadTask2);
+        tasksAdapter = new TasksAdapter(this, downloadTasks);
+        downloadTasksRecyclerView.setAdapter(tasksAdapter);
 
     }
 
@@ -56,8 +85,8 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                mDownloadManager.downloadFile(url1,localPath1);
-                mDownloadManager.downloadFile(url2,localPath2);
+//                mDownloadManager.downloadFile(url1,localPath1);
+//                mDownloadManager.downloadFile(url2,localPath2);
                 return true;
             } else {
                 Log.v(TAG, "Permission is revoked");
@@ -67,8 +96,8 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
         } else {
             //permission is automatically granted on sdk<23 upon installation
             Log.v(TAG, "Permission is granted");
-            mDownloadManager.downloadFile(url1,localPath1);
-            mDownloadManager.downloadFile(url2,localPath2);
+//            mDownloadManager.downloadFile(url1,localPath1);
+//            mDownloadManager.downloadFile(url2,localPath2);
 
 
             return true;
@@ -81,8 +110,8 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
             //resume tasks needing this permission
-            mDownloadManager.downloadFile(url1,localPath1);
-            mDownloadManager.downloadFile(url2,localPath2);
+//            mDownloadManager.downloadFile(url1,localPath1);
+//            mDownloadManager.downloadFile(url2,localPath2);
 
         }
     }
@@ -90,12 +119,19 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
 
     @Override
     public void publishToUIThread(DownloadResult result) {
-        DownloadStatus status = null;
-        if (result != null)
-            status = result.getDownloadStatus();
+        for(DownloadTask downloadTask : downloadTasks){
+            if(downloadTask.getId() == result.getId()){
+                downloadTask.setProgress(result.getProgress());
+            }
+        }
 
-        Log.e("msg_ui", status.name());
-        ((TextView) findViewById(R.id.statustextview)).setText(status.name());
+        tasksAdapter.notifyDataSetChanged();
+//        DownloadStatus status = null;
+//        if (result != null)
+//            status = result.getDownloadStatus();
+
+//        Log.e("msg_ui", status.name());
+//        ((TextView) findViewById(R.id.statustextview)).setText(status.name());
     }
 
 }
