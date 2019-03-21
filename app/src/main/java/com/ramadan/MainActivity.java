@@ -104,6 +104,9 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
         tasksAdapter = new TasksAdapter(this, downloadTasks);
         downloadTasksRecyclerView.setAdapter(tasksAdapter);
 
+
+
+
     }
 
     public boolean isStoragePermissionGranted() {
