@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
         mDownloadManager.setUiThreadCallback(this);
         isStoragePermissionGranted();
 
+
+
+
     }
 
     public boolean isStoragePermissionGranted() {
