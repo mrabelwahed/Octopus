@@ -21,9 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class DownloadManager {
     private final ThreadPoolExecutor downloadThreadPool;
     private final BlockingQueue<Runnable> mDownloadQueue;
-//    private WeakReference<UIThreadCallback> mUiThreadCallbackWeakReference;
     private List<Future> mRunningDownloadList = new ArrayList<>();
-//    private UiHandler uiHandler;
 
     public static DownloadManager mDownloadManager;
 
@@ -43,9 +41,6 @@ public class DownloadManager {
     }
 
 
-//    public void downloadFile(String url ,String localPath,UIThreadCallback uiThreadCallback) {
-//        addDownloadTask(new DownloadTask(url, localPath, uiThreadCallback));
-//    }
     public void downloadFile(DownloadTask task){
         addDownloadTask(task);
     }
@@ -53,12 +48,6 @@ public class DownloadManager {
     private void addDownloadTask(Callable task) {
         mRunningDownloadList.add(downloadThreadPool.submit(task));
     }
-
-
-//    public void setUiThreadCallback(UIThreadCallback mUiThreadCallback) {
-//        this.mUiThreadCallbackWeakReference = new WeakReference<>(mUiThreadCallback);
-//        uiHandler = new UiHandler(mUiThreadCallbackWeakReference);
-//    }
 
 
 //    public void cancelAll() {

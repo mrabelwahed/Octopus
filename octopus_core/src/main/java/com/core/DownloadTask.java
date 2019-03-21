@@ -64,9 +64,6 @@ public class DownloadTask implements Callable {
             int bufferLength = 0;
             long total = 0l;
             while ((bufferLength = in.read(buffer)) > 0) {
-                total += bufferLength;
-//                updateDownloadProgressBar();
-                Log.d("XXXXXXXXXXXX", progress + "");
                 fileOutput.write(buffer, 0, bufferLength);
             }
             fileOutput.close();
@@ -76,6 +73,13 @@ public class DownloadTask implements Callable {
             return false;
         }
         return true;
+    }
+    public void setDestination(String destination){
+        this.destination = destination;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     private void updateDownloadProgressBar(){
