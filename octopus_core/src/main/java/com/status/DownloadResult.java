@@ -5,7 +5,7 @@ public class DownloadResult {
     private DownloadStatus downloadStatus;
     private String localPath;
     private String url;
-
+    private int progress ;
     public long getId() {
         return id;
     }
@@ -36,5 +36,13 @@ public class DownloadResult {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 }
