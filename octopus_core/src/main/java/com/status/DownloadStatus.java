@@ -1,5 +1,5 @@
 package com.status;
 
 public enum DownloadStatus {
-    COMPLETED,FAILED,CANCEL_ALL
+    STARTED,COMPLETED,FAILED,CANCELED,CANCEL_ALL
 }
