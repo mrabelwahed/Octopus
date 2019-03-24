@@ -25,14 +25,14 @@ public class UiHandler extends Handler {
         DownloadResult result = new DownloadResult();
         result.setId(msg.what);
         result.setProgress(msg.arg1);
-        if(msg.getData() != null) {
-            if (msg.getData().getSerializable(Util.MESSAGE_BODY).equals(DownloadStatus.COMPLETED))
-                result.setDownloadStatus(DownloadStatus.COMPLETED);
-            else if (msg.getData().getSerializable(Util.MESSAGE_BODY).equals(DownloadStatus.FAILED))
-                result.setDownloadStatus(DownloadStatus.FAILED);
-            else if (msg.getData().getSerializable(Util.MESSAGE_BODY).equals(DownloadStatus.CANCEL_ALL))
-                result.setDownloadStatus(DownloadStatus.CANCEL_ALL);
-        }
+//        if(msg.getData() != null) {
+//            if (msg.getData().getSerializable(Util.MESSAGE_BODY).equals(DownloadStatus.COMPLETED))
+//                result.setDownloadStatus(DownloadStatus.COMPLETED);
+//            else if (msg.getData().getSerializable(Util.MESSAGE_BODY).equals(DownloadStatus.FAILED))
+//                result.setDownloadStatus(DownloadStatus.FAILED);
+//            else if (msg.getData().getSerializable(Util.MESSAGE_BODY).equals(DownloadStatus.CANCEL_ALL))
+//                result.setDownloadStatus(DownloadStatus.CANCEL_ALL);
+//        }
         if (mUithUiThreadCallbackWeakReference != null && mUithUiThreadCallbackWeakReference.get() != null)
             mUithUiThreadCallbackWeakReference.get().publishToUIThread(result);
 

@@ -1,11 +1,13 @@
 package com.ramadan;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -44,12 +46,15 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         DownloadTask task = getTask(position);
         holder.fileNameTextView.setText(task.getFileName());
+        if(task.getProgress() != -1){holder.seekBar.setText("downloading...");}else{holder.seekBar.setText("");}
         holder.seekBar.setVisibility(task.getProgress() == -1 ? View.GONE : View.VISIBLE);
         holder.downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 holder.seekBar.setVisibility(View.VISIBLE);
-                DownloadManager.getInstance().downloadFile(task);
+                if(task.getProgress() == -1) {
+                    DownloadManager.getInstance().downloadFile(task);
+                }
             }
         });
     }
@@ -64,9 +69,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
     }
 
     class TaskViewHolder extends RecyclerView.ViewHolder {
-        ProgressBar seekBar;
+        TextView seekBar;
         TextView fileNameTextView;
-        ImageButton downloadButton;
+        Button downloadButton;
 
         TaskViewHolder(View taskItemView) {
             super(taskItemView);

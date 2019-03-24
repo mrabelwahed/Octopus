@@ -25,8 +25,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity implements UIThreadCallback {
@@ -58,30 +57,34 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
         // Get the external storage directory path
         String path = Environment.getExternalStorageDirectory().toString() + "/ramadan";
         new File(path).mkdir();
-        file1 = new File(path, "filex" + new Date().getTime() + "." + Util.getFileExtension(url1));
+        file1 = new File(path, "filex" + generateUniqueId() + "." + Util.getFileExtension(url1));
         localPath1 = file1.getPath();
 
-        file2 = new File(path, "filey" + new Date().getTime() + "." + Util.getFileExtension(url2));
+        file2 = new File(path, "filey" + generateUniqueId() + "." + Util.getFileExtension(url2));
         localPath2 = file2.getPath();
 
-        DownloadTask downloadTask1 = new DownloadTask(new Date().getTime(), url3, localPath1, this);
-        downloadTask1.setFileName("task 1");
-        DownloadTask downloadTask2 = new DownloadTask.Builder(url1).destination(localPath1)
-                .fileId(new Date().getTime()).fileName("task 2").UiThreadCallback(this).build();
-        DownloadTask downloadTask3 = new DownloadTask(new Date().getTime(), url2, localPath2, this);
-        downloadTask3.setFileName("task 3");
+        DownloadTask downloadTask1 = new DownloadTask(generateUniqueId(),
+                "https://sample-videos.com/img/Sample-jpg-image-1mb.jpg", localPath1, this);
+        downloadTask1.setFileName("task 1 - 1 MB");
 
-        DownloadTask downloadTask4 = new DownloadTask.Builder(url1).destination(localPath1)
-                .fileId(new Date().getTime()).fileName("task 4").UiThreadCallback(this).build();
+        DownloadTask downloadTask2 = new DownloadTask.Builder("https://sample-videos.com/img/Sample-jpg-image-2mb.jpg").destination(localPath1)
+                .fileId(generateUniqueId()).fileName("task 2 - 2 MB").UiThreadCallback(this).build();
 
-        DownloadTask downloadTask5 = new DownloadTask.Builder(url1).destination(localPath1)
-                .fileId(new Date().getTime()).fileName("task 5").UiThreadCallback(this).build();
+        DownloadTask downloadTask3 = new DownloadTask(generateUniqueId(),
+                "https://sample-videos.com/img/Sample-jpg-image-5mb.jpg"
+                , localPath2, this);
+        downloadTask3.setFileName("task 3 - 5 MB");
 
-        DownloadTask downloadTask6 = new DownloadTask.Builder(url1).destination(localPath1)
-                .fileId(new Date().getTime()).fileName("task 6").UiThreadCallback(this).build();
+        DownloadTask downloadTask4 = new DownloadTask.Builder("https://sample-videos.com/img/Sample-jpg-image-10mb.jpg").destination(localPath1)
+                .fileId(generateUniqueId()).fileName("task 4 - 10 MB").UiThreadCallback(this).build();
 
-        DownloadTask downloadTask7 = new DownloadTask.Builder(url1).destination(localPath1)
-                .fileId(new Date().getTime()).fileName("task 7").UiThreadCallback(this).build();
+        DownloadTask downloadTask5 = new DownloadTask.Builder("https://sample-videos.com/img/Sample-jpg-image-15mb.jpeg").destination(localPath1)
+                .fileId(generateUniqueId()).fileName("task 5 - 15 MB").UiThreadCallback(this).build();
+        DownloadTask downloadTask6 = new DownloadTask.Builder("https://sample-videos.com/pdf/Sample-pdf-5mb.pdf").destination(localPath1)
+                .fileId(generateUniqueId()).fileName("task 6 pdf - 5 MB").UiThreadCallback(this).build();
+        DownloadTask downloadTask7 = new DownloadTask.Builder("http://enos.itcollege.ee/~jpoial/allalaadimised/reading/Android-Programming-Cookbook.pdf").destination(localPath1)
+                .fileId(generateUniqueId()).fileName("task 7 pdf - 8 MB").UiThreadCallback(this).build();
+
 
 
         downloadTasks.add(downloadTask1);
@@ -91,9 +94,14 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
         downloadTasks.add(downloadTask5);
         downloadTasks.add(downloadTask6);
         downloadTasks.add(downloadTask7);
+
         for(DownloadTask downloadTask : downloadTasks){
-            downloadTask.setDestination(new File(path, downloadTask.getFileName() + "_" + new Date().getTime() + "." + Util.getFileExtension(downloadTask.getUrl())).getPath());
+            downloadTask.setDestination(new File(path, downloadTask.getFileName() + "_" + generateUniqueId() + "." + Util.getFileExtension(downloadTask.getUrl())).getPath());
         }
+    }
+
+    private int generateUniqueId() {
+        return new Random().nextInt();
     }
 
     private void initUi() {
