@@ -1,5 +1,6 @@
 package com.core;
 
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Message;
 import android.util.Log;
@@ -17,6 +18,7 @@ import java.util.concurrent.Callable;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.internal.http.RealResponseBody;
 
 /**
  * DownloadTask is used for sending tasks to the thread pool. When a callable is submitted,
@@ -24,6 +26,7 @@ import okhttp3.Response;
  */
 
 public class DownloadTask implements Callable {
+    public static final String TAG = Thread.currentThread().getName();
     private String url;
     private String destination;
     private UiHandler uiHandler;
@@ -31,7 +34,8 @@ public class DownloadTask implements Callable {
     private int progress = -1;
     private WeakReference<UIThreadCallback> mUiThreadCallbackWeakReference;
     private long id;
-    public DownloadTask(long id, String url, String destination,UIThreadCallback uiThreadCallback) {
+
+    public DownloadTask(long id, String url, String destination, UIThreadCallback uiThreadCallback) {
         this.id = id;
         this.url = url;
         this.destination = destination;
@@ -48,9 +52,15 @@ public class DownloadTask implements Callable {
         this.fileName = builder.fileName;
     }
 
+    public static void log(String TAG, String message) {
+        Log.d(TAG, message);
+    }
 
     private boolean downloadFile(String url, String destination) {
         try {
+            log(Thread.currentThread().getName(), "================= download file " + fileName + " ===============");
+            progress = 0;
+            updateDownloadProgressBar();
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder().url(url).build();
 
@@ -62,8 +72,14 @@ public class DownloadTask implements Callable {
 
             byte[] buffer = new byte[1024];
             int bufferLength = 0;
-            long total = 0l;
+            long total = Math.round(((RealResponseBody) response.body()).contentLength() / (1024 * 1024f));
+            long currentProgress = 0;
+            log(Thread.currentThread().getName(), fileName + " file size " + Math.round(((RealResponseBody) response.body()).contentLength() / (1024 * 1024f)) + " MB");
             while ((bufferLength = in.read(buffer)) > 0) {
+                currentProgress += bufferLength;
+                progress = (int) (((currentProgress / (1024 * 1024f)) / total) * 100f);
+//                updateDownloadProgressBar();
+                log(TAG, TAG + " " + fileName + " progress -> " + progress +"%");
                 fileOutput.write(buffer, 0, bufferLength);
             }
             fileOutput.close();
@@ -71,10 +87,15 @@ public class DownloadTask implements Callable {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        } finally {
+            progress = -1;
+            updateDownloadProgressBar();
+            log(Thread.currentThread().getName(), "================= end of download file " + fileName + " ===============");
         }
         return true;
     }
-    public void setDestination(String destination){
+
+    public void setDestination(String destination) {
         this.destination = destination;
     }
 
@@ -82,12 +103,13 @@ public class DownloadTask implements Callable {
         return url;
     }
 
-    private void updateDownloadProgressBar(){
+    private void updateDownloadProgressBar() {
         Message message = new Message();
         message.what = (int) this.id;
         message.arg1 = progress;
         uiHandler.sendMessage(message);
     }
+
     @Override
     public Object call() throws Exception {
         Message message = null;
@@ -97,6 +119,7 @@ public class DownloadTask implements Callable {
         } else if (status.equals(DownloadStatus.FAILED.name())) {
             message = Util.createMessage(this.id, DownloadStatus.FAILED);
         }
+        progress = -1;
         message.arg1 = -1;
         uiHandler.sendMessage(message);
         return null;
@@ -125,6 +148,7 @@ public class DownloadTask implements Callable {
     public void setId(long id) {
         this.id = id;
     }
+
     public static class Builder {
         private String url;
         private String destination;
@@ -132,14 +156,31 @@ public class DownloadTask implements Callable {
         private WeakReference<UIThreadCallback> mUiThreadCallbackWeakReference;
         private long id;
 
-        public Builder(String url){
+        public Builder(String url) {
             this.url = url;
         }
-        public Builder fileName(String fileName){this.fileName = fileName; return this;}
-        public Builder destination(String destinationPath){this.destination = destinationPath; return this;}
-        public Builder UiThreadCallback(UIThreadCallback uiThreadCallback){this.mUiThreadCallbackWeakReference = new WeakReference<UIThreadCallback>(uiThreadCallback); return this;}
-        public Builder fileId(long id){this.id = id; return this;}
-        public DownloadTask build(){
+
+        public Builder fileName(String fileName) {
+            this.fileName = fileName;
+            return this;
+        }
+
+        public Builder destination(String destinationPath) {
+            this.destination = destinationPath;
+            return this;
+        }
+
+        public Builder UiThreadCallback(UIThreadCallback uiThreadCallback) {
+            this.mUiThreadCallbackWeakReference = new WeakReference<UIThreadCallback>(uiThreadCallback);
+            return this;
+        }
+
+        public Builder fileId(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public DownloadTask build() {
             return new DownloadTask(this);
         }
 

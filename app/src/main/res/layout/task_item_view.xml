@@ -25,15 +25,13 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="file name" />
 
-    <ImageButton
+    <Button
         android:id="@+id/download_button"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_width="48dp"
+        android:layout_height="44dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/ic_file_download_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -41,19 +39,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.76" />
 
-    <ProgressBar
+    <TextView
         android:id="@+id/seek_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
-        android:layout_height="10dp"
+        android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp"
         android:indeterminate="true"
+        android:max="100"
+        android:min="0"
         android:progressBackgroundTint="@color/colorPrimary"
         android:progressTint="#000"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/download_button"
         app:layout_constraintHorizontal_bias="1.0"
