@@ -12,6 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.core.DownloadManager;
@@ -30,6 +33,7 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements UIThreadCallback {
     public static final String url3 = "https://doc-00-50-docs.googleusercontent.com/docs/securesc/1r14jt81f7jnfbd9piaptmojvlobuogr/13epqo5he43gt6o7bntmpn8k9lc12tt7/1553083200000/14676411655443883941/14676411655443883941/0BwnvTqAnwmkaYVlfQzRrRU1uX3c?e=download&nonce=g7ft2cf127jho&user=14676411655443883941&hash=rh3qsfv5cvk2udc05sn2hrb0j4chbb0f";
+    public static final String DOWNLOADING_FOLDER_PATH = Environment.getExternalStorageDirectory().toString() + "/ramadan";
     private static int REQUEST_PERMISSION = 0x0;
     private static final String TAG = MainActivity.class.getSimpleName();
     private DownloadManager mDownloadManager;
@@ -154,4 +158,29 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
         tasksAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main_activity_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.delete_all_files_button:
+                Utils.deleteFiles(DOWNLOADING_FOLDER_PATH);
+                break;
+            case R.id.download_all_files:
+                downloadAllFiles();
+                break;
+        }
+        return true;
+    }
+
+    private void downloadAllFiles() {
+        for(DownloadTask downloadTask : downloadTasks){
+            DownloadManager.getInstance().downloadFile(downloadTask);
+        }
+    }
 }
