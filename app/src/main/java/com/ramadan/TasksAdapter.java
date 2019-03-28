@@ -19,10 +19,10 @@ import java.util.List;
 
 
 public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHolder> {
-    List<DownloadTask> downloadTasks;
-    Context context;
+   private  List<DownloadTask> downloadTasks;
+   private  Context context;
 
-    TasksAdapter(Context context) {
+    public TasksAdapter(Context context) {
         this.context = context;
     }
 

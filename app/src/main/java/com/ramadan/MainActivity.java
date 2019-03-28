@@ -5,40 +5,33 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.TextView;
 
-import com.core.DownloadManager;
 import com.core.DownloadTask;
 import com.status.DownloadResult;
-import com.status.DownloadStatus;
 import com.ui.UIThreadCallback;
 import com.util.Util;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity implements UIThreadCallback {
-    public static final String url3 = "https://doc-00-50-docs.googleusercontent.com/docs/securesc/1r14jt81f7jnfbd9piaptmojvlobuogr/13epqo5he43gt6o7bntmpn8k9lc12tt7/1553083200000/14676411655443883941/14676411655443883941/0BwnvTqAnwmkaYVlfQzRrRU1uX3c?e=download&nonce=g7ft2cf127jho&user=14676411655443883941&hash=rh3qsfv5cvk2udc05sn2hrb0j4chbb0f";
     private static int REQUEST_PERMISSION = 0x0;
     private static final String TAG = MainActivity.class.getSimpleName();
-    private DownloadManager mDownloadManager;
     private String url1, url2;
     private File file1, file2;
     private String localPath1, localPath2;
     private RecyclerView downloadTasksRecyclerView;
     private List<DownloadTask> downloadTasks = new ArrayList<>();
-    TasksAdapter tasksAdapter;
+    private TasksAdapter tasksAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,16 +68,28 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
                 , localPath2, this);
         downloadTask3.setFileName("task 3 - 5 MB");
 
-        DownloadTask downloadTask4 = new DownloadTask.Builder("https://sample-videos.com/img/Sample-jpg-image-10mb.jpg").destination(localPath1)
-                .fileId(generateUniqueId()).fileName("task 4 - 10 MB").UiThreadCallback(this).build();
+        DownloadTask downloadTask4 = new DownloadTask.Builder("https://sample-videos.com/img/Sample-jpg-image-10mb.jpg")
+                .destination(localPath1)
+                .fileId(generateUniqueId())
+                .fileName("task 4 - 10 MB")
+                .UiThreadCallback(this).build();
 
-        DownloadTask downloadTask5 = new DownloadTask.Builder("https://sample-videos.com/img/Sample-jpg-image-15mb.jpeg").destination(localPath1)
-                .fileId(generateUniqueId()).fileName("task 5 - 15 MB").UiThreadCallback(this).build();
-        DownloadTask downloadTask6 = new DownloadTask.Builder("https://sample-videos.com/pdf/Sample-pdf-5mb.pdf").destination(localPath1)
-                .fileId(generateUniqueId()).fileName("task 6 pdf - 5 MB").UiThreadCallback(this).build();
-        DownloadTask downloadTask7 = new DownloadTask.Builder("http://enos.itcollege.ee/~jpoial/allalaadimised/reading/Android-Programming-Cookbook.pdf").destination(localPath1)
-                .fileId(generateUniqueId()).fileName("task 7 pdf - 8 MB").UiThreadCallback(this).build();
+        DownloadTask downloadTask5 = new DownloadTask.Builder("https://sample-videos.com/img/Sample-jpg-image-15mb.jpeg")
+                .destination(localPath1)
+                .fileId(generateUniqueId())
+                .fileName("task 5 - 15 MB").UiThreadCallback(this)
+                .build();
 
+        DownloadTask downloadTask6 = new DownloadTask.Builder("https://sample-videos.com/pdf/Sample-pdf-5mb.pdf")
+                .destination(localPath1)
+                .fileId(generateUniqueId())
+                .fileName("task 6 pdf - 5 MB")
+                .UiThreadCallback(this).build();
+
+        DownloadTask downloadTask7 = new DownloadTask.Builder("http://enos.itcollege.ee/~jpoial/allalaadimised/reading/Android-Programming-Cookbook.pdf")
+                .destination(localPath1)
+                .fileId(generateUniqueId())
+                .fileName("task 7 pdf - 8 MB").UiThreadCallback(this).build();
 
 
         downloadTasks.add(downloadTask1);
@@ -95,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
         downloadTasks.add(downloadTask6);
         downloadTasks.add(downloadTask7);
 
-        for(DownloadTask downloadTask : downloadTasks){
+        for (DownloadTask downloadTask : downloadTasks) {
             downloadTask.setDestination(new File(path, downloadTask.getFileName() + "_" + generateUniqueId() + "." + Util.getFileExtension(downloadTask.getUrl())).getPath());
         }
     }
@@ -111,8 +116,6 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
 
         tasksAdapter = new TasksAdapter(this, downloadTasks);
         downloadTasksRecyclerView.setAdapter(tasksAdapter);
-
-
 
 
     }
@@ -139,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements UIThreadCallback 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.v(TAG, "Permission: " + permissions[0] + "was " + grantResults[0]);
-            //resume tasks needing this permission
         }
     }
 
